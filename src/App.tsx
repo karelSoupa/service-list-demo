@@ -2,7 +2,6 @@ import { useState, KeyboardEvent } from 'react'
 import { Button } from "./components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./components/ui/dialog"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./components/ui/dropdown-menu"
-import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover"
 import { Separator } from "./components/ui/separator"
 import { Plus, Edit2, ChevronRight, Check } from 'lucide-react'
 
@@ -193,11 +192,9 @@ export default function App() {
     }
   ])
 
-  const [showAddMenu, setShowAddMenu] = useState<'root' | string | null>(null)
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [showServiceModal, setShowServiceModal] = useState(false)
   const [showExistingServiceModal, setShowExistingServiceModal] = useState(false)
-  console.log(showExistingServiceModal)
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryDescription, setNewCategoryDescription] = useState('')
   const [newServiceName, setNewServiceName] = useState('')
