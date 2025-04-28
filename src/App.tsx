@@ -85,6 +85,12 @@ export default function App() {
       name: 'Skincare',
       description: 'Professional skincare treatments and consultation',
       parentId: 'cat8'
+    },
+    {
+      id: 'uncategorized',
+      name: 'Uncategorized',
+      description: 'Services without a specific category',
+      parentId: null
     }
   ])
 
@@ -166,6 +172,24 @@ export default function App() {
       name: 'Skin Consultation',
       description: 'Professional skin analysis and consultation',
       categoryIds: ['cat10']
+    },
+    {
+      id: 'svc14',
+      name: 'Gift Card',
+      description: 'Purchase a gift card for any service',
+      categoryIds: ['uncategorized']
+    },
+    {
+      id: 'svc15',
+      name: 'Consultation',
+      description: 'General consultation for any service',
+      categoryIds: ['uncategorized']
+    },
+    {
+      id: 'svc16',
+      name: 'Package Deal',
+      description: 'Custom package combining multiple services',
+      categoryIds: ['uncategorized']
     }
   ])
 
@@ -175,7 +199,9 @@ export default function App() {
   const [showExistingServiceModal, setShowExistingServiceModal] = useState(false)
   console.log(showExistingServiceModal)
   const [newCategoryName, setNewCategoryName] = useState('')
+  const [newCategoryDescription, setNewCategoryDescription] = useState('')
   const [newServiceName, setNewServiceName] = useState('')
+  const [newServiceDescription, setNewServiceDescription] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const [editingService, setEditingService] = useState<Service | null>(null)
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([])
@@ -188,11 +214,13 @@ export default function App() {
       {
         id: generateId(),
         name: newCategoryName,
+        description: newCategoryDescription,
         parentId
       }
     ])
     
     setNewCategoryName('')
+    setNewCategoryDescription('')
     setShowCategoryModal(false)
   }
 
@@ -204,11 +232,13 @@ export default function App() {
       {
         id: generateId(),
         name: newServiceName,
+        description: newServiceDescription,
         categoryIds: selectedCategoryIds
       }
     ])
     
     setNewServiceName('')
+    setNewServiceDescription('')
     setShowServiceModal(false)
   }
 
@@ -251,46 +281,51 @@ export default function App() {
           style={{ marginLeft: `${level * 1.5}rem` }}
         >
           <ChevronRight className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-600">{category.name}</span>
-          <div className="ml-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Plus className="h-4 w-4 text-gray-500" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-sm">
-                <DropdownMenuItem
-                  onClick={() => {
-                    setSelectedCategoryId(category.id)
-                    setShowCategoryModal(true)
-                  }}
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Add Category
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setSelectedCategoryIds([category.id])
-                    setShowServiceModal(true)
-                  }}
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Add Service
-                </DropdownMenuItem>
-                <Separator className="my-2" />
-                <DropdownMenuItem
-                  onClick={() => {
-                    setSelectedCategoryIds([category.id])
-                    setShowExistingServiceModal(true)
-                  }}
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Add Existing Service
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex-1">
+            <div className="text-gray-600">{category.name}</div>
+            <div className="text-sm text-gray-400">{category.description}</div>
           </div>
+          {category.id !== 'uncategorized' && (
+            <div className="ml-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Plus className="h-4 w-4 text-gray-500" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-sm">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setSelectedCategoryId(category.id)
+                      setShowCategoryModal(true)
+                    }}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    Add Category
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setSelectedCategoryIds([category.id])
+                      setShowServiceModal(true)
+                    }}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    Add Service
+                  </DropdownMenuItem>
+                  <Separator className="my-2" />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setSelectedCategoryIds([category.id])
+                      setShowExistingServiceModal(true)
+                    }}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    Add Existing Service
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
 
         {getCategoryServices(category.id).map(service => (
@@ -299,7 +334,10 @@ export default function App() {
             className="flex items-center gap-2 group border border-purple-100 rounded px-2 py-1"
             style={{ marginLeft: `${(level + 1) * 1.5}rem` }}
           >
-            <span className="text-gray-500">{service.name}</span>
+            <div className="flex-1">
+              <div className="text-gray-500">{service.name}</div>
+              <div className="text-sm text-gray-400">{service.description}</div>
+            </div>
             <Button
               variant="ghost"
               size="icon"
@@ -424,11 +462,19 @@ export default function App() {
                 placeholder="Category name"
                 className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
+              <textarea
+                value={newCategoryDescription}
+                onChange={(e) => setNewCategoryDescription(e.target.value)}
+                placeholder="Category description"
+                className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                rows={3}
+              />
               <div className="flex justify-end gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setNewCategoryName('')
+                    setNewCategoryDescription('')
                     setShowCategoryModal(false)
                   }}
                 >
@@ -456,11 +502,19 @@ export default function App() {
                 placeholder="Service name"
                 className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
+              <textarea
+                value={newServiceDescription}
+                onChange={(e) => setNewServiceDescription(e.target.value)}
+                placeholder="Service description"
+                className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                rows={3}
+              />
               <div className="flex justify-end gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setNewServiceName('')
+                    setNewServiceDescription('')
                     setShowServiceModal(false)
                   }}
                 >
